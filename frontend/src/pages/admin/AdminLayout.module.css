@@ -1,0 +1,165 @@
+.shell {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* Celular: barra no topo, fixa, com as seções roláveis na horizontal. */
+.barra {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #fff;
+  border-bottom: 1px solid rgba(34, 121, 87, 0.14);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 11px 16px;
+}
+
+.marca {
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  color: var(--verde-escuro);
+  flex: none;
+}
+
+.secoes {
+  list-style: none;
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  flex: 1;
+  /* Esconde a barra de rolagem que aparece só por causa do overflow horizontal. */
+  scrollbar-width: none;
+}
+
+.secoes::-webkit-scrollbar {
+  display: none;
+}
+
+.link {
+  display: block;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--tinta-suave);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 7px 12px;
+  border-radius: 100px;
+  transition: background 160ms var(--ease-out), color 160ms var(--ease-out);
+}
+
+.linkAtivo {
+  background: var(--verde-claro);
+  color: var(--verde-escuro);
+}
+
+.conta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+}
+
+.email {
+  display: none;
+  font-size: 13px;
+  color: var(--tinta-suave);
+  max-width: 190px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sair {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--tinta);
+  border: 1px solid rgba(34, 121, 87, 0.22);
+  border-radius: 100px;
+  padding: 6px 13px;
+  transition: background 160ms var(--ease-out);
+}
+
+.sair:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.conteudo {
+  padding: 22px 16px 48px;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .link:hover {
+    color: var(--verde-escuro);
+    background: rgba(173, 234, 180, 0.4);
+  }
+
+  .sair:not(:disabled):hover {
+    background: rgba(34, 121, 87, 0.07);
+  }
+}
+
+/* Desktop: barra lateral. */
+@media (min-width: 900px) {
+  .shell {
+    display: grid;
+    grid-template-columns: 218px 1fr;
+  }
+
+  .barra {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100dvh;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
+    padding: 22px 16px;
+    border-bottom: 0;
+    border-right: 1px solid rgba(34, 121, 87, 0.14);
+  }
+
+  .marca {
+    font-size: 17px;
+    padding: 0 8px;
+  }
+
+  .secoes {
+    flex-direction: column;
+    gap: 3px;
+    overflow: visible;
+    flex: 1;
+  }
+
+  .link {
+    padding: 9px 12px;
+    border-radius: 10px;
+  }
+
+  .conta {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 9px;
+    border-top: 1px solid rgba(34, 121, 87, 0.12);
+    padding-top: 14px;
+  }
+
+  .email {
+    display: block;
+    max-width: none;
+    padding: 0 4px;
+  }
+
+  .sair {
+    text-align: center;
+  }
+
+  .conteudo {
+    padding: 30px 28px 56px;
+  }
+}

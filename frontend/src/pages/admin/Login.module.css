@@ -1,0 +1,101 @@
+.tela {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 20px;
+}
+
+.cartao {
+  width: 100%;
+  max-width: 372px;
+  background: #fff;
+  border: 1px solid rgba(34, 121, 87, 0.14);
+  border-radius: 18px;
+  padding: 26px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cabecalho h1 {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+.cabecalho p {
+  margin-top: 5px;
+  font-size: 13.5px;
+  color: var(--tinta-suave);
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.campo span {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tinta);
+}
+
+.campo input {
+  font: inherit;
+  color: var(--tinta);
+  background: var(--creme);
+  border: 1px solid rgba(34, 121, 87, 0.2);
+  border-radius: 10px;
+  padding: 11px 13px;
+  /* 16px evita o zoom automático do Safari no iOS ao focar o campo. */
+  font-size: 16px;
+  transition: border-color 160ms var(--ease-out);
+}
+
+.campo input:focus-visible {
+  outline: 2px solid var(--verde);
+  outline-offset: 1px;
+  border-color: var(--verde);
+}
+
+.campo input:disabled {
+  opacity: 0.6;
+}
+
+.erro {
+  font-size: 13.5px;
+  color: #a3302f;
+  background: rgba(245, 107, 107, 0.12);
+  border: 1px solid rgba(245, 107, 107, 0.35);
+  border-radius: 9px;
+  padding: 9px 11px;
+}
+
+.enviar {
+  margin-top: 2px;
+  background: var(--verde-escuro);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 12px 16px;
+  border-radius: 100px;
+  transition: transform 180ms var(--ease-out), opacity 160ms var(--ease-out);
+}
+
+.enviar:disabled {
+  opacity: 0.65;
+  cursor: progress;
+}
+
+.enviar:not(:disabled):active {
+  transform: scale(0.985);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .enviar:not(:disabled):hover {
+    transform: translateY(-1px);
+  }
+}

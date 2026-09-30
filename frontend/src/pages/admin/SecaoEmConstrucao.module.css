@@ -1,0 +1,22 @@
+.titulo {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+.descricao {
+  margin-top: 5px;
+  font-size: 14px;
+  color: var(--tinta-suave);
+}
+
+.vazio {
+  margin-top: 18px;
+  background: #fff;
+  border: 1px dashed rgba(34, 121, 87, 0.28);
+  border-radius: 14px;
+  padding: 34px 20px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--tinta-suave);
+}

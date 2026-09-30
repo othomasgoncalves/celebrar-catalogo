@@ -1,0 +1,33 @@
+.verificando {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.rotulo {
+  font-size: 14px;
+  color: var(--tinta-suave);
+}
+
+.spinner {
+  width: 26px;
+  height: 26px;
+  border: 2.5px solid rgba(34, 121, 87, 0.18);
+  border-top-color: var(--verde-escuro);
+  border-radius: 50%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .spinner {
+    animation: girar 760ms linear infinite;
+  }
+
+  @keyframes girar {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
