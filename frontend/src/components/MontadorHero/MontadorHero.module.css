@@ -1,0 +1,151 @@
+.hero {
+  margin: 20px;
+  background: var(--verde-escuro);
+  border-radius: 22px;
+  padding: 26px 24px 24px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.ornament {
+  position: absolute;
+  right: -34px;
+  top: -34px;
+  width: 150px;
+  height: 150px;
+  opacity: 0.13;
+}
+
+.ornament svg {
+  width: 100%;
+  height: 100%;
+  fill: var(--verde-claro);
+}
+
+.tag {
+  display: inline-block;
+  background: var(--coral);
+  color: #fff;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  padding: 5px 11px;
+  border-radius: 100px;
+  margin-bottom: 14px;
+}
+
+.titulo {
+  font-size: 29px;
+  line-height: 1.14;
+  font-weight: 700;
+  letter-spacing: -0.017em;
+  max-width: 12ch;
+  position: relative;
+}
+
+.descricao {
+  margin-top: 11px;
+  font-size: 15.5px;
+  line-height: 1.5;
+  color: #D8F0E3;
+  max-width: 34ch;
+  position: relative;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  background: var(--coral);
+  color: #fff;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 14px 22px;
+  border-radius: 100px;
+  margin-top: 20px;
+  position: relative;
+  transition: transform 180ms var(--ease-out);
+}
+
+.cta svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 220ms var(--ease-out);
+}
+
+.cta:active {
+  transform: scale(0.97);
+}
+
+.passos {
+  display: flex;
+  gap: 18px;
+  margin-top: 20px;
+  padding-top: 17px;
+  border-top: 1px solid rgba(173, 234, 180, 0.26);
+  position: relative;
+}
+
+.passo {
+  flex: 1;
+}
+
+.passo b {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--verde-claro);
+}
+
+.passo span {
+  display: block;
+  font-size: 12.5px;
+  color: #BEDECD;
+  line-height: 1.35;
+  margin-top: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cta:hover {
+    transform: translateY(-1px);
+  }
+
+  .cta:hover svg {
+    transform: translateX(3px);
+  }
+}
+
+@media (min-width: 760px) {
+  .hero {
+    margin: 28px 24px;
+    padding: 44px 44px 40px;
+    display: flex;
+    gap: 48px;
+    align-items: center;
+  }
+
+  .txt {
+    flex: 1;
+  }
+
+  .titulo {
+    font-size: 40px;
+    max-width: 14ch;
+  }
+
+  .descricao {
+    font-size: 17px;
+  }
+
+  .passos {
+    flex-direction: column;
+    border-top: 0;
+    border-left: 1px solid rgba(173, 234, 180, 0.26);
+    padding: 0 0 0 28px;
+    margin-top: 0;
+    width: 230px;
+    gap: 16px;
+  }
+}

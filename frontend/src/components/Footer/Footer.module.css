@@ -1,0 +1,56 @@
+.footer {
+  background: var(--verde-escuro);
+  color: #fff;
+  margin-top: 38px;
+  padding: 32px 20px 34px;
+  text-align: center;
+}
+
+.marca {
+  height: 42px;
+  width: auto;
+  margin: 0 auto;
+}
+
+.slogan {
+  font-size: 14px;
+  color: #BEDECD;
+  margin-top: 4px;
+}
+
+.fzap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--coral);
+  color: #fff;
+  font-weight: 700;
+  font-size: 15.5px;
+  padding: 13px 24px;
+  border-radius: 100px;
+  margin-top: 20px;
+  text-decoration: none;
+  transition: transform 180ms var(--ease-out);
+}
+
+.fzap svg {
+  width: 17px;
+  height: 17px;
+}
+
+.fzap:active {
+  transform: scale(0.97);
+}
+
+.fim {
+  font-size: 12.5px;
+  color: #8FBBA5;
+  margin-top: 22px;
+  line-height: 1.5;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .fzap:hover {
+    transform: translateY(-1px);
+  }
+}

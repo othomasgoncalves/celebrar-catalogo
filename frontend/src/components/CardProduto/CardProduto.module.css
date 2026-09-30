@@ -1,0 +1,89 @@
+.card {
+  transition: transform 200ms var(--ease-out);
+}
+
+.card:active {
+  transform: scale(0.985);
+}
+
+.thumb {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 240ms var(--ease-out);
+}
+
+.thumb svg {
+  width: 34%;
+  height: 34%;
+  opacity: 0.42;
+}
+
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card h3 {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.28;
+  margin-top: 10px;
+  letter-spacing: -0.005em;
+  min-height: 2.56em;
+}
+
+.desc {
+  font-size: 13px;
+  color: var(--tinta-suave);
+  line-height: 1.35;
+  margin-top: 3px;
+  min-height: 1.35em;
+}
+
+.preco {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--verde-escuro);
+  margin-top: 7px;
+}
+
+.esgotado .thumb {
+  filter: saturate(0.32);
+}
+
+.esgotado h3,
+.esgotado .desc {
+  color: #8E9E95;
+}
+
+.esgotado .preco {
+  color: #8E9E95;
+  font-weight: 600;
+}
+
+.selo {
+  position: absolute;
+  left: 9px;
+  top: 9px;
+  background: rgba(27, 59, 46, 0.82);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 100px;
+  z-index: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card:hover .thumb {
+    transform: scale(1.015);
+  }
+}
