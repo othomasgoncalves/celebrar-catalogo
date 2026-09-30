@@ -1,0 +1,42 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: celebrarcatalog-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: celebrarcatalog
+      POSTGRES_USER: celebrarcatalog
+      POSTGRES_PASSWORD: celebrarcatalog
+    ports:
+      - "5432:5432"
+    volumes:
+      - celebrarcatalog-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U celebrarcatalog -d celebrarcatalog"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+    container_name: celebrarcatalog-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/celebrarcatalog
+      SPRING_DATASOURCE_USERNAME: celebrarcatalog
+      SPRING_DATASOURCE_PASSWORD: celebrarcatalog
+      # Repassado do ambiente do host, sem valor padrao de proposito: o backend se
+      # recusa a subir sem um segredo de 32+ bytes. Defina APP_JWT_SECRET no shell ou
+      # em um arquivo .env (que nao deve ser versionado) antes do `docker compose up`.
+      APP_JWT_SECRET: ${APP_JWT_SECRET:?defina APP_JWT_SECRET com no minimo 32 bytes}
+      # true apenas atras de HTTPS; em dev local o acesso e por HTTP.
+      APP_JWT_COOKIE_SECURE: ${APP_JWT_COOKIE_SECURE:-false}
+    ports:
+      - "8080:8080"
+
+volumes:
+  celebrarcatalog-postgres-data:

@@ -1,0 +1,13 @@
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
+
+# Segredos locais (APP_JWT_SECRET e afins) nunca vao para o repositorio.
+.env
+.env.*
+!.env.example
+
+# Estado local de permissoes do Claude Code; o launch.json e compartilhado.
+.claude/settings.local.json
