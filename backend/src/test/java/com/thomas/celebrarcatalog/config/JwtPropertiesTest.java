@@ -2,6 +2,7 @@ package com.thomas.celebrarcatalog.config;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import org.springframework.core.env.StandardEnvironment;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -18,7 +19,18 @@ class JwtPropertiesTest {
 
     private static final String SEGREDO_VALIDO = "segredo-de-teste-com-mais-de-32-bytes-de-tamanho";
 
+    /**
+     * Remove as fontes de propriedade do ambiente. Um teste sobre "o segredo esta
+     * ausente" precisa controlar o que esta ausente: sem isto, quem rodasse a suite com
+     * APP_JWT_SECRET exportado no shell (o jeito normal de subir a aplicacao) veria o
+     * contexto iniciar com sucesso e o teste falhar por um motivo que nao e defeito.
+     */
     private final ApplicationContextRunner runner = new ApplicationContextRunner()
+            .withInitializer(contexto -> {
+                var fontes = contexto.getEnvironment().getPropertySources();
+                fontes.remove(StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME);
+                fontes.remove(StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME);
+            })
             .withUserConfiguration(ConfiguracaoDeTeste.class);
 
     @Test
