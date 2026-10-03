@@ -8,4 +8,5 @@ export interface Produto {
   disponivelNaCesta: boolean
   categoriaId: string
   imagem: string | null
+  ativo: boolean
 }

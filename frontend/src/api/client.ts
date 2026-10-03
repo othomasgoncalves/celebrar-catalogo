@@ -96,12 +96,15 @@ async function lerCorpo(resposta: Response): Promise<unknown> {
 }
 
 async function montarErro(resposta: Response): Promise<ErroApi> {
-  let mensagem =
-    MENSAGENS_POR_STATUS[resposta.status] ?? `Não foi possível concluir a ação (${resposta.status}).`
+  return erroDeCorpo(resposta.status, await resposta.text())
+}
+
+function erroDeCorpo(status: number, texto: string): ErroApi {
+  let mensagem = MENSAGENS_POR_STATUS[status] ?? `Não foi possível concluir a ação (${status}).`
   let campos: Record<string, string> | undefined
 
   try {
-    const corpo: unknown = JSON.parse(await resposta.text())
+    const corpo: unknown = JSON.parse(texto)
     if (corpo && typeof corpo === 'object') {
       const { erro, campos: camposRecebidos } = corpo as {
         erro?: unknown
@@ -116,7 +119,7 @@ async function montarErro(resposta: Response): Promise<ErroApi> {
 
   }
 
-  return new ErroApi(mensagem, resposta.status, campos)
+  return new ErroApi(mensagem, status, campos)
 }
 
 export function apiGet<T>(caminho: string, opcoes?: Pick<OpcoesRequisicao, 'tratarSessaoExpirada'>) {
@@ -133,4 +136,58 @@ export function apiPut<T>(caminho: string, corpo?: unknown) {
 
 export function apiDelete<T>(caminho: string) {
   return pedir<T>(caminho, { metodo: 'DELETE' })
+}
+
+interface OpcoesUpload {
+  aoProgredir?: (fracao: number) => void
+}
+
+export function apiUpload<T>(
+  caminho: string,
+  campo: string,
+  arquivo: File,
+  opcoes: OpcoesUpload = {},
+): Promise<T> {
+  return new Promise<T>((resolver, rejeitar) => {
+    const formulario = new FormData()
+    formulario.append(campo, arquivo)
+
+    const requisicao = new XMLHttpRequest()
+    requisicao.open('POST', caminho, true)
+    requisicao.withCredentials = true
+
+    const csrf = lerCookie(COOKIE_CSRF)
+    if (csrf) requisicao.setRequestHeader(HEADER_CSRF, csrf)
+
+    if (opcoes.aoProgredir) {
+      const aoProgredir = opcoes.aoProgredir
+      requisicao.upload.addEventListener('progress', (evento) => {
+        if (evento.lengthComputable && evento.total > 0) {
+          aoProgredir(evento.loaded / evento.total)
+        }
+      })
+    }
+
+    requisicao.addEventListener('load', () => {
+      if (requisicao.status === 401) {
+        for (const tratador of [...tratadores]) tratador()
+      }
+
+      if (requisicao.status < 200 || requisicao.status >= 300) {
+        rejeitar(erroDeCorpo(requisicao.status, requisicao.responseText))
+        return
+      }
+
+      try {
+        resolver((requisicao.responseText ? JSON.parse(requisicao.responseText) : undefined) as T)
+      } catch {
+        rejeitar(new ErroApi('Resposta inesperada do servidor.', requisicao.status))
+      }
+    })
+
+    requisicao.addEventListener('error', () => rejeitar(new ErroApi(MENSAGENS_POR_STATUS[0], 0)))
+    requisicao.addEventListener('abort', () => rejeitar(new ErroApi('Envio cancelado.', 0)))
+
+    requisicao.send(formulario)
+  })
 }
