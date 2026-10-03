@@ -35,8 +35,17 @@ services:
       APP_JWT_SECRET: ${APP_JWT_SECRET:?defina APP_JWT_SECRET com no minimo 32 bytes}
       # true apenas atras de HTTPS; em dev local o acesso e por HTTP.
       APP_JWT_COOKIE_SECURE: ${APP_JWT_COOKIE_SECURE:-false}
+      # Precisa cair dentro do volume montado abaixo: o filesystem do container e
+      # descartado no restart, e as fotos do catalogo nao estao no banco.
+      APP_IMAGENS_DIRETORIO: /var/lib/celebrarcatalog/imagens
+    volumes:
+      - celebrarcatalog-imagens:/var/lib/celebrarcatalog/imagens
     ports:
       - "8080:8080"
 
 volumes:
   celebrarcatalog-postgres-data:
+  # As imagens enviadas pelo admin vivem no disco, nao no banco. Sem este volume elas
+  # desapareceriam a cada `docker compose up --build`, deixando os produtos apontando
+  # para arquivos que nao existem mais.
+  celebrarcatalog-imagens:

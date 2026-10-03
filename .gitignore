@@ -11,3 +11,8 @@ Thumbs.db
 
 # Estado local de permissoes do Claude Code; o launch.json e compartilhado.
 .claude/settings.local.json
+
+# Imagens enviadas em dev local (app.imagens.diretorio). Em producao isso vive em um
+# volume; aqui e so lixo de desenvolvimento.
+dados/
+backend/dados/

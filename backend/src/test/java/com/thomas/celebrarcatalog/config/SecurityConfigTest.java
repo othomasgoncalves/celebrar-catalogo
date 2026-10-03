@@ -5,8 +5,12 @@ import com.thomas.celebrarcatalog.auth.UsuarioFixture;
 import com.thomas.celebrarcatalog.auth.TentativasLoginService;
 import com.thomas.celebrarcatalog.auth.UsuarioRepository;
 import com.thomas.celebrarcatalog.categoria.CategoriaRepository;
+import com.thomas.celebrarcatalog.categoria.CategoriaService;
 import com.thomas.celebrarcatalog.cesta.CestaProntaRepository;
+import com.thomas.celebrarcatalog.cesta.CestaProntaService;
+import com.thomas.celebrarcatalog.imagem.ArmazenamentoImagens;
 import com.thomas.celebrarcatalog.produto.ProdutoRepository;
+import com.thomas.celebrarcatalog.produto.ProdutoService;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +35,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Verifica o mapa de autorizacao, o CSRF e os headers de resposta.
  *
- * <p>Nao existe controller sob {@code /api/admin/**} nesta fase do projeto, e isso nao
- * atrapalha: os filtros de seguranca rodam antes do mapeamento de handlers, entao 401 e
- * 403 sao decididos sem nunca chegar a um controller. Quando a requisicao <i>passa</i>
- * pela seguranca, o resultado esperado e 404 — prova de que a autorizacao liberou.
+ * <p>Os filtros de seguranca rodam antes do mapeamento de handlers, entao 401 e 403 sao
+ * decididos sem nunca chegar a um controller — e e so isso que estes testes afirmam. Os
+ * services estao mockados de proposito: o que importa aqui e <i>nao</i> ser 401 nem 403
+ * quando a autorizacao libera a rota. O status que aparece depois disso (400 de validacao,
+ * 404 de rota inexistente) e so a prova de que a requisicao passou da seguranca, nao uma
+ * afirmacao sobre a regra de negocio.
  */
 @WebMvcTest
 @Import({SecurityConfig.class, SessaoCookie.class, JwtService.class, TentativasLoginService.class})
@@ -61,6 +67,14 @@ class SecurityConfigTest {
     private CategoriaRepository categoriaRepository;
     @MockitoBean
     private CestaProntaRepository cestaProntaRepository;
+    @MockitoBean
+    private CategoriaService categoriaService;
+    @MockitoBean
+    private ProdutoService produtoService;
+    @MockitoBean
+    private CestaProntaService cestaProntaService;
+    @MockitoBean
+    private ArmazenamentoImagens armazenamentoImagens;
 
     // --- endpoints publicos ---
 
@@ -84,8 +98,9 @@ class SecurityConfigTest {
 
     @Test
     void get_imagens_e_publico() throws Exception {
-        // Nao ha controller de imagens ainda: 404 (e nao 401/403) prova que a
-        // seguranca liberou a rota.
+        // "produto-1.png" nao e UUID+extensao, entao o controller responde 404 sem tocar
+        // o disco. O que este teste afirma e que o status nao e 401 nem 403: a rota e
+        // publica.
         mockMvc.perform(get("/api/imagens/produto-1.png"))
                 .andExpect(status().isNotFound());
     }
@@ -117,12 +132,14 @@ class SecurityConfigTest {
     void admin_com_cookie_e_header_csrf_passa_pela_seguranca() throws Exception {
         String token = jwtService.gerarToken(UsuarioFixture.admin());
 
-        // 404 porque o endpoint ainda nao existe — o que importa e nao ser 401 nem 403.
+        // 400 porque o corpo vazio nao passa na Bean Validation do ProdutoEntradaDto — e
+        // chegar na validacao do controller ja e a prova de que a seguranca liberou. O que
+        // importa e nao ser 401 nem 403.
         mockMvc.perform(comCsrf(post("/api/admin/produtos"))
                         .cookie(new Cookie(COOKIE_SESSAO, token))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isBadRequest());
     }
 
     @Test

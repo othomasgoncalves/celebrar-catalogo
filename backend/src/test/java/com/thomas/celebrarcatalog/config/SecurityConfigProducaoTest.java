@@ -5,8 +5,12 @@ import com.thomas.celebrarcatalog.auth.TentativasLoginService;
 import com.thomas.celebrarcatalog.auth.UsuarioFixture;
 import com.thomas.celebrarcatalog.auth.UsuarioRepository;
 import com.thomas.celebrarcatalog.categoria.CategoriaRepository;
+import com.thomas.celebrarcatalog.categoria.CategoriaService;
 import com.thomas.celebrarcatalog.cesta.CestaProntaRepository;
+import com.thomas.celebrarcatalog.cesta.CestaProntaService;
+import com.thomas.celebrarcatalog.imagem.ArmazenamentoImagens;
 import com.thomas.celebrarcatalog.produto.ProdutoRepository;
+import com.thomas.celebrarcatalog.produto.ProdutoService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -51,6 +55,14 @@ class SecurityConfigProducaoTest {
     private CategoriaRepository categoriaRepository;
     @MockitoBean
     private CestaProntaRepository cestaProntaRepository;
+    @MockitoBean
+    private CategoriaService categoriaService;
+    @MockitoBean
+    private ProdutoService produtoService;
+    @MockitoBean
+    private CestaProntaService cestaProntaService;
+    @MockitoBean
+    private ArmazenamentoImagens armazenamentoImagens;
 
     @Test
     void cookie_de_sessao_ganha_o_atributo_secure() throws Exception {
