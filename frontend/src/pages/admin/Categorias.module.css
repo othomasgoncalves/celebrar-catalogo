@@ -1,0 +1,30 @@
+.marcador {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  cursor: pointer;
+}
+
+.marcador input {
+  width: 19px;
+  height: 19px;
+  flex: none;
+  margin-top: 1px;
+  accent-color: var(--verde-escuro);
+  cursor: pointer;
+}
+
+.marcador span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.marcador small {
+  font-size: 12.5px;
+  font-weight: 400;
+  color: var(--tinta-suave);
+  line-height: 1.4;
+}
