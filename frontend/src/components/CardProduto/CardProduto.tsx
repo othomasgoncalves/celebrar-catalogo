@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import type { Produto } from '../../types/produto'
+import { urlImagem } from '../../lib/imagens'
 import { IconCoracao } from '../icons/IconCoracao'
 import styles from './CardProduto.module.css'
 
@@ -11,7 +12,6 @@ interface CardProdutoProps {
   produto: Produto
   toneIndex: number
   animationDelayMs: number
-  /** Conteúdo extra no pé do card (o stepper do montador, por exemplo). */
   children?: ReactNode
 }
 
@@ -27,7 +27,7 @@ export function CardProduto({ produto, toneIndex, animationDelayMs, children }: 
       <div className={`${styles.thumb} ${tom}`}>
         {produto.esgotado && <span className={styles.selo}>Esgotado</span>}
         {produto.imagem ? (
-          <img src={produto.imagem} alt={produto.nome} />
+          <img src={urlImagem(produto.imagem)} alt={produto.nome} />
         ) : (
           <IconCoracao />
         )}

@@ -2,6 +2,7 @@ import { fetchCestas } from '../../api/cestas'
 import { useFetch } from '../../hooks/useFetch'
 import { IconCoracao } from '../icons/IconCoracao'
 import { buildWhatsappUrl } from '../../lib/whatsapp'
+import { urlImagem } from '../../lib/imagens'
 import styles from './CestasProntas.module.css'
 
 const TONS = ['t2', 't1', 't3']
@@ -45,7 +46,7 @@ export function CestasProntas() {
         return (
           <article key={cesta.id} className={`${styles.cesta} rise`} style={{ animationDelay: `${120 + i * 70}ms` }}>
             <div className={`${styles.foto} ${tom}`}>
-              {cesta.imagem ? <img src={cesta.imagem} alt={cesta.nome} /> : <IconCoracao />}
+              {cesta.imagem ? <img src={urlImagem(cesta.imagem)} alt={cesta.nome} /> : <IconCoracao />}
             </div>
             <div className={styles.corpo}>
               <h3>{cesta.nome}</h3>
