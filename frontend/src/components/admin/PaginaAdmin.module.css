@@ -1,0 +1,123 @@
+.cabecalho {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.textos h1 {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+.textos p {
+  margin-top: 5px;
+  font-size: 14px;
+  color: var(--tinta-suave);
+}
+
+.novo {
+  flex: none;
+  background: var(--verde-escuro);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: 100px;
+  white-space: nowrap;
+  transition: transform 180ms var(--ease-out), opacity 160ms var(--ease-out);
+}
+
+.novo:disabled {
+  opacity: 0.6;
+}
+
+.novo:not(:disabled):active {
+  transform: scale(0.985);
+}
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.esqueleto {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.esqueletoLinha {
+  height: 94px;
+  border-radius: 14px;
+  background: linear-gradient(90deg, #f3ece0 25%, #fbf5e9 50%, #f3ece0 75%);
+  background-size: 200% 100%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .esqueletoLinha {
+    animation: brilho 1300ms linear infinite;
+  }
+
+  @keyframes brilho {
+    to {
+      background-position: -200% 0;
+    }
+  }
+}
+
+.erro {
+  background: #fff;
+  border: 1px solid rgba(245, 107, 107, 0.35);
+  border-radius: 14px;
+  padding: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.erro p {
+  font-size: 14px;
+  color: #a3302f;
+}
+
+.erro button {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--tinta);
+  border: 1px solid rgba(34, 121, 87, 0.22);
+  border-radius: 100px;
+  padding: 8px 15px;
+}
+
+.vazio {
+  background: #fff;
+  border: 1px dashed rgba(34, 121, 87, 0.28);
+  border-radius: 14px;
+  padding: 34px 20px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--tinta-suave);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .novo:not(:disabled):hover {
+    transform: translateY(-1px);
+  }
+
+  .erro button:hover {
+    background: rgba(34, 121, 87, 0.07);
+  }
+}
+
+@media (min-width: 760px) {
+  .esqueletoLinha {
+    height: 56px;
+  }
+}

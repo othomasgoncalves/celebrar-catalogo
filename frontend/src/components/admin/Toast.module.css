@@ -1,0 +1,43 @@
+.area {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: 18px;
+  z-index: 60;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.toast {
+  background: var(--verde-escuro);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 11px 17px;
+  border-radius: 100px;
+  box-shadow: 0 8px 22px rgba(27, 59, 46, 0.22);
+  max-width: 100%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .toast {
+    animation: entrar 260ms var(--ease-out);
+  }
+
+  @keyframes entrar {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+  }
+}
+
+@media (min-width: 900px) {
+  .area {
+    left: auto;
+    right: 26px;
+    bottom: 24px;
+    justify-content: flex-end;
+  }
+}

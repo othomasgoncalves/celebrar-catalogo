@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { ToastProvider } from '../../components/admin/Toast'
 import styles from './AdminLayout.module.css'
 
 const SECOES = [
@@ -53,9 +54,12 @@ export function AdminLayout() {
         </div>
       </nav>
 
-      <main className={styles.conteudo}>
-        <Outlet />
-      </main>
+      {/* Envolve só o conteúdo: o toast é das telas do admin, não do login. */}
+      <ToastProvider>
+        <main className={styles.conteudo}>
+          <Outlet />
+        </main>
+      </ToastProvider>
     </div>
   )
 }
