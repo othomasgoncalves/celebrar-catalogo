@@ -8,4 +8,6 @@ import java.util.UUID;
 public interface CestaProntaRepository extends JpaRepository<CestaPronta, UUID> {
 
     List<CestaPronta> findAllByAtivoTrue();
+
+    List<CestaPronta> findAllByOrderByNomeAsc();
 }

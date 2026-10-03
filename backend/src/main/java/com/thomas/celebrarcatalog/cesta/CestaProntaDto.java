@@ -9,7 +9,8 @@ public record CestaProntaDto(
         String descricao,
         BigDecimal preco,
         String itens,
-        String imagem
+        String imagem,
+        boolean ativo
 ) {
 
     static CestaProntaDto from(CestaPronta cesta) {
@@ -19,7 +20,8 @@ public record CestaProntaDto(
                 cesta.getDescricao(),
                 cesta.getPreco(),
                 cesta.getItens(),
-                cesta.getImagem()
+                cesta.getImagem(),
+                cesta.isAtivo()
         );
     }
 }

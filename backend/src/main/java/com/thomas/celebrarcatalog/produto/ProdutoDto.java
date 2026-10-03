@@ -12,7 +12,8 @@ public record ProdutoDto(
         boolean esgotado,
         boolean disponivelNaCesta,
         UUID categoriaId,
-        String imagem
+        String imagem,
+        boolean ativo
 ) {
 
     static ProdutoDto from(Produto produto) {
@@ -25,7 +26,8 @@ public record ProdutoDto(
                 produto.getQuantidade() == 0,
                 produto.isDisponivelNaCesta(),
                 produto.getCategoria().getId(),
-                produto.getImagem()
+                produto.getImagem(),
+                produto.isAtivo()
         );
     }
 }

@@ -18,7 +18,7 @@ class CategoriaController {
 
     @GetMapping
     List<CategoriaDto> listar() {
-        return categoriaRepository.findAllByOrderByOrdemAscNomeAsc()
+        return categoriaRepository.findAllByAtivoTrueOrderByOrdemAscNomeAsc()
                 .stream()
                 .map(CategoriaDto::from)
                 .toList();

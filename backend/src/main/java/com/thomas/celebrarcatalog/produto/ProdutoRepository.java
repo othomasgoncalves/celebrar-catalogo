@@ -14,4 +14,8 @@ public interface ProdutoRepository extends JpaRepository<Produto, UUID> {
     List<Produto> findAllByAtivoTrueAndDisponivelNaCestaTrue();
 
     List<Produto> findAllByAtivoTrueAndDisponivelNaCestaTrueAndCategoriaId(UUID categoriaId);
+
+    List<Produto> findAllByOrderByNomeAsc();
+
+    boolean existsByCategoriaId(UUID categoriaId);
 }
