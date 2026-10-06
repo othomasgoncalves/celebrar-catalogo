@@ -151,11 +151,6 @@
   }
 }
 
-/*
- * Carrossel horizontal existe porque no celular não cabe tudo lado a lado. Em
- * tela cheia cabe — e um carrossel com três cards encostados à esquerda num
- * monitor de 1920px desperdiça metade da largura. Vira grade.
- */
 @media (min-width: 1280px) {
   .cestas {
     display: grid;

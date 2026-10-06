@@ -84,7 +84,6 @@ export function Login() {
           />
         </label>
 
-        {/* role=alert faz o leitor de tela anunciar a falha sem precisar de foco. */}
         {erro && (
           <p className={styles.erro} role="alert">
             {erro}

@@ -126,12 +126,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  /*
-   * O fundo e a sombra atravessam a tela, mas o conteúdo não: sem o max(), num
-   * monitor largo o total ficaria num canto e o botão no outro. O max() cai no
-   * --gutter assim que a tela é menor que o limite, então no celular isso é só
-   * o padding de sempre.
-   */
   padding-block: 12px calc(12px + env(safe-area-inset-bottom));
   padding-inline: max(var(--gutter), calc((100% - 1100px) / 2));
   background: #fff;
@@ -263,7 +257,6 @@
   }
 }
 
-/* Mesma lógica da grade da home: colunas acompanham a largura da tela. */
 @media (min-width: 1280px) {
   .grid {
     grid-template-columns: repeat(auto-fill, minmax(var(--card-min), 1fr));

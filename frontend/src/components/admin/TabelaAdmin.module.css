@@ -1,4 +1,3 @@
-/* Visualmente escondido, mas presente para o leitor de tela. */
 .oculto {
   position: absolute;
   width: 1px;

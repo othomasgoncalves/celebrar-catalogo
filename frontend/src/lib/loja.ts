@@ -1,13 +1,6 @@
-/**
- * Dados de contato da loja, em um lugar só. Antes o telefone e o nome viviam
- * repetidos em Header, Footer e Sobre, e o número do WhatsApp em whatsapp.ts —
- * trocar um e esquecer o outro era questão de tempo.
- */
-
 export const LOJA = {
   nome: 'Celebrar',
 
-  /** Só dígitos, com DDI, no formato que o wa.me espera. */
   whatsapp: '554439000663',
 
   telefone: {
@@ -27,13 +20,11 @@ export const LOJA = {
   entrega: 'Paranavaí e região, sob consulta',
 } as const
 
-/** "Av. Paraná, 1309 — Jardim América, Paranavaí - PR, 87705-190" */
 export function enderecoCompleto(): string {
   const { logradouro, bairro, cidade, uf, cep } = LOJA.endereco
   return `${logradouro} — ${bairro}, ${cidade} - ${uf}, ${cep}`
 }
 
-/** Abre o endereço no app de mapas do aparelho (Google Maps no Android/desktop). */
 export function urlMapa(): string {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
     `${LOJA.nome}, ${enderecoCompleto()}`,

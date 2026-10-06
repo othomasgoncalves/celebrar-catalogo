@@ -6,11 +6,6 @@
   text-align: center;
 }
 
-/*
- * O rodapé pinta a tela toda, mas o conteúdo é texto centralizado — sem este
- * limite, "Av. Paraná, 1309 — Jardim América..." esticaria numa linha só,
- * perdida no meio de um monitor de 2560px.
- */
 .conteudo {
   max-width: 560px;
   margin: 0 auto;
@@ -65,7 +60,6 @@
   line-height: 1.45;
   color: #D8F0E3;
   text-decoration: none;
-  /* Alvo confortável no dedo sem afastar as duas linhas no desktop. */
   padding: 3px 0;
 }
 

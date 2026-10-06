@@ -52,7 +52,6 @@ function Home() {
 function App() {
   return (
     <BrowserRouter>
-      {/* Dentro do router porque o provider navega para o login quando a sessão cai. */}
       <AuthProvider>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -78,7 +77,6 @@ function App() {
             <Route path="produtos" element={<AdminProdutos />} />
             <Route path="cestas" element={<AdminCestas />} />
             <Route path="categorias" element={<AdminCategorias />} />
-            {/* Sem isto, uma URL errada sob /admin renderizaria tela branca. */}
             <Route path="*" element={<Navigate to="/admin/produtos" replace />} />
           </Route>
         </Routes>

@@ -7,10 +7,6 @@ export function buildWhatsappUrl(mensagem: string): string {
   return `https://wa.me/${LOJA.whatsapp}?text=${encodeURIComponent(mensagem)}`
 }
 
-/**
- * Monta o texto do pedido da cesta personalizada. O valor de cada linha é o
- * subtotal do item (preço x quantidade), para as linhas fecharem com o total.
- */
 export function buildMensagemCesta(itens: ItemCesta[], total: number): string {
   const linhas = itens.map(
     ({ produto, quantidade }) =>

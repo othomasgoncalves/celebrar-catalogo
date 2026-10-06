@@ -54,7 +54,6 @@ export function AdminLayout() {
         </div>
       </nav>
 
-      {/* Envolve só o conteúdo: o toast é das telas do admin, não do login. */}
       <ToastProvider>
         <main className={styles.conteudo}>
           <Outlet />

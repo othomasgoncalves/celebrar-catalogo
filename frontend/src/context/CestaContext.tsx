@@ -5,7 +5,6 @@ import type { Produto } from '../types/produto'
 
 const CHAVE_STORAGE = 'celebrar:cesta'
 
-/** Teto por item, só para a cliente não digitar um número sem sentido no stepper. */
 export const QUANTIDADE_MAXIMA = 99
 
 type ItensCesta = Map<string, ItemCesta>
@@ -28,11 +27,6 @@ interface CestaContextValue {
 
 const CestaContext = createContext<CestaContextValue | null>(null)
 
-/**
- * Itens que entram na conta. Um produto pode esgotar depois de ter sido
- * escolhido (ou depois de ter ficado guardado no localStorage), e nesse caso
- * ele continua visível na tela mas não soma no total nem vai no pedido.
- */
 export function itensContabilizaveis(itens: ItensCesta): ItemCesta[] {
   return [...itens.values()].filter((item) => !item.produto.esgotado)
 }
@@ -42,7 +36,6 @@ function reducer(itens: ItensCesta, action: CestaAction): ItensCesta {
     case 'adicionar': {
       const atual = itens.get(action.produto.id)
       const quantidade = Math.min((atual?.quantidade ?? 0) + 1, QUANTIDADE_MAXIMA)
-      // Regrava o produto para o item guardado acompanhar preço/nome atuais.
       return new Map(itens).set(action.produto.id, { produto: action.produto, quantidade })
     }
 
@@ -87,10 +80,6 @@ function ehItemValido(valor: unknown): valor is ItemCesta {
   )
 }
 
-/**
- * Lê a cesta guardada. Qualquer coisa estranha no localStorage (JSON quebrado,
- * formato antigo, chave mexida na mão) vira cesta vazia — nunca uma tela branca.
- */
 function carregar(): ItensCesta {
   try {
     const bruto = localStorage.getItem(CHAVE_STORAGE)
@@ -117,7 +106,6 @@ function salvar(itens: ItensCesta) {
   try {
     localStorage.setItem(CHAVE_STORAGE, JSON.stringify([...itens.values()]))
   } catch {
-    // Storage cheio ou bloqueado (aba privada): a cesta segue só em memória.
   }
 }
 

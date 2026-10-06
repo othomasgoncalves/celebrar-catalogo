@@ -11,15 +11,8 @@
   --tinta-suave: #5A7568;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 
-  /*
-   * Margem lateral do conteúdo. O site é full-bleed — não existe mais um
-   * max-width central —, então é esta variável que dá o respiro das bordas e
-   * cresce junto com a tela. Todo componente usa var(--gutter) no padding
-   * horizontal; nada de 20px solto.
-   */
   --gutter: 20px;
 
-  /* Largura mínima de um card de produto na grade que se auto-ajusta. */
   --card-min: 220px;
 }
 
@@ -59,11 +52,6 @@ body {
   color: var(--tinta);
   font-size: 16px;
   line-height: 1.5;
-  /*
-   * Rede de segurança do mobile: um filho que estoure a largura (nome de
-   * produto gigante, imagem sem max-width) rolaria a página inteira de lado
-   * em vez de só o próprio bloco.
-   */
   overflow-x: hidden;
 }
 
@@ -80,15 +68,10 @@ button {
   cursor: pointer;
 }
 
-/*
- * Antes travava em 1080px e centralizava. Agora ocupa a tela toda: quem dá o
- * respiro lateral é o --gutter de cada seção.
- */
 .wrap {
   width: 100%;
 }
 
-/* título de seção (reutilizado por vários componentes) */
 .sec {
   padding: 0 var(--gutter);
   margin-top: 34px;
@@ -129,7 +112,6 @@ h2 {
   }
 }
 
-/* tons do placeholder (thumb/foto sem imagem) */
 .t1 { background: var(--verde-claro); }
 .t1 svg { fill: var(--verde-escuro); }
 .t2 { background: var(--rosa); }

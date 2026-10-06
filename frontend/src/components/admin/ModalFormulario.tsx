@@ -42,7 +42,6 @@ export function ModalFormulario({
   }, [])
 
   useEffect(() => {
-    // Sem isto, a página atrás do modal rola junto no celular.
     const anterior = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     return () => {

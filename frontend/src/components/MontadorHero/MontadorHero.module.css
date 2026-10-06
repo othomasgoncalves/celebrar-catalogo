@@ -150,10 +150,6 @@
   }
 }
 
-/*
- * Em tela cheia o hero fica muito largo: sem crescer a tipografia junto, o
- * texto vira uma ilhota perdida num bloco verde enorme.
- */
 @media (min-width: 1280px) {
   .hero {
     padding: 56px 56px 52px;

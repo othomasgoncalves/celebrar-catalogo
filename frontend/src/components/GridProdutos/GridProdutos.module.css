@@ -54,11 +54,6 @@
   }
 }
 
-/*
- * Acima de 1280px o site é full-bleed, então fixar 4 colunas deixaria cards
- * gigantes. auto-fill + minmax faz o número de colunas acompanhar a largura
- * da tela, mantendo o card sempre com pelo menos --card-min.
- */
 @media (min-width: 1280px) {
   .grid {
     grid-template-columns: repeat(auto-fill, minmax(var(--card-min), 1fr));

@@ -14,8 +14,6 @@
   font-size: 14.5px;
   line-height: 1.6;
   color: var(--tinta-suave);
-  /* O card ocupa a tela toda, mas a linha de texto não deve: acima de ~75
-     caracteres a leitura cai. */
   max-width: 72ch;
 }
 
