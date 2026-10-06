@@ -2,8 +2,18 @@
   background: var(--verde-escuro);
   color: #fff;
   margin-top: 38px;
-  padding: 32px 20px 34px;
+  padding: 32px var(--gutter) calc(34px + env(safe-area-inset-bottom));
   text-align: center;
+}
+
+/*
+ * O rodapé pinta a tela toda, mas o conteúdo é texto centralizado — sem este
+ * limite, "Av. Paraná, 1309 — Jardim América..." esticaria numa linha só,
+ * perdida no meio de um monitor de 2560px.
+ */
+.conteudo {
+  max-width: 560px;
+  margin: 0 auto;
 }
 
 .marca {
@@ -42,11 +52,39 @@
   transform: scale(0.97);
 }
 
+.contato {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 22px;
+  font-style: normal;
+}
+
+.linha {
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: #D8F0E3;
+  text-decoration: none;
+  /* Alvo confortável no dedo sem afastar as duas linhas no desktop. */
+  padding: 3px 0;
+}
+
+.linha:active {
+  color: #fff;
+}
+
 .fim {
   font-size: 12.5px;
   color: #8FBBA5;
-  margin-top: 22px;
+  margin-top: 18px;
   line-height: 1.5;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .linha:hover {
+    color: #fff;
+    text-decoration: underline;
+  }
 }
 
 @media (hover: hover) and (pointer: fine) {

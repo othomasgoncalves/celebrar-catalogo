@@ -10,14 +10,20 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 20px;
-  max-width: 1080px;
-  margin: 0 auto;
+  gap: 12px;
+  padding: 14px var(--gutter);
 }
 
 .hd img {
   height: 34px;
   width: auto;
+  flex: none;
+}
+
+@media (min-width: 1280px) {
+  .hd img {
+    height: 40px;
+  }
 }
 
 .zap {

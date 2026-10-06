@@ -2,7 +2,7 @@
   display: flex;
   gap: 14px;
   overflow-x: auto;
-  padding: 0 20px 6px;
+  padding: 0 var(--gutter) 6px;
   scrollbar-width: none;
 }
 
@@ -93,7 +93,7 @@
   text-align: center;
   color: var(--tinta-suave);
   font-size: 14.5px;
-  padding: 26px 20px;
+  padding: 26px var(--gutter);
 }
 
 .skeletonCesta {
@@ -145,12 +145,32 @@
 }
 
 @media (min-width: 760px) {
+  .cesta,
+  .skeletonCesta {
+    width: 320px;
+  }
+}
+
+/*
+ * Carrossel horizontal existe porque no celular não cabe tudo lado a lado. Em
+ * tela cheia cabe — e um carrossel com três cards encostados à esquerda num
+ * monitor de 1920px desperdiça metade da largura. Vira grade.
+ */
+@media (min-width: 1280px) {
   .cestas {
-    padding: 0 24px 6px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+    overflow-x: visible;
   }
 
   .cesta,
   .skeletonCesta {
-    width: 320px;
+    width: auto;
+  }
+
+  .foto,
+  .skeletonFoto {
+    height: 180px;
   }
 }

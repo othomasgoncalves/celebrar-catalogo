@@ -8,7 +8,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 16px 20px 18px;
+  padding: 16px var(--gutter) 18px;
 }
 
 .voltar {
@@ -50,7 +50,7 @@
 
 .secGrid {
   flex: 1;
-  padding: 0 20px 22px;
+  padding: 0 var(--gutter) 22px;
   margin-top: 16px;
 }
 
@@ -126,7 +126,14 @@
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
+  /*
+   * O fundo e a sombra atravessam a tela, mas o conteúdo não: sem o max(), num
+   * monitor largo o total ficaria num canto e o botão no outro. O max() cai no
+   * --gutter assim que a tela é menor que o limite, então no celular isso é só
+   * o padding de sempre.
+   */
+  padding-block: 12px calc(12px + env(safe-area-inset-bottom));
+  padding-inline: max(var(--gutter), calc((100% - 1100px) / 2));
   background: #fff;
   border-top: 1px solid rgba(34, 121, 87, 0.16);
   box-shadow: 0 -6px 20px rgba(27, 59, 46, 0.07);
@@ -234,7 +241,7 @@
 
 @media (min-width: 760px) {
   .cabecalho {
-    padding: 26px 24px 20px;
+    padding: 26px var(--gutter) 20px;
   }
 
   .cabecalhoTxt h1 {
@@ -242,7 +249,7 @@
   }
 
   .secGrid {
-    padding: 0 24px 26px;
+    padding: 0 var(--gutter) 26px;
   }
 
   .grid {
@@ -251,7 +258,15 @@
   }
 
   .barra {
-    padding: 14px 24px calc(14px + env(safe-area-inset-bottom));
+    padding-block: 14px calc(14px + env(safe-area-inset-bottom));
     border-radius: 18px 18px 0 0;
+  }
+}
+
+/* Mesma lógica da grade da home: colunas acompanham a largura da tela. */
+@media (min-width: 1280px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(var(--card-min), 1fr));
+    gap: 24px;
   }
 }

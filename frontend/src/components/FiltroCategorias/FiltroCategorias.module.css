@@ -2,7 +2,7 @@
   display: flex;
   gap: 8px;
   overflow-x: auto;
-  padding: 2px 20px 4px;
+  padding: 2px var(--gutter) 4px;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
 }
@@ -33,6 +33,15 @@
 
 .chip:active {
   transform: scale(0.96);
+}
+
+/* No dedo o chip precisa de alvo maior que os ~35px que o padding dá. */
+@media (pointer: coarse) {
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 42px;
+  }
 }
 
 .skeletonChip {
@@ -66,8 +75,15 @@
   }
 }
 
-@media (min-width: 760px) {
+/*
+ * Com a tela larga os chips cabem todos sem rolagem, então viram uma linha que
+ * quebra. Abaixo disso continuam em carrossel horizontal, que é o certo no
+ * celular.
+ */
+@media (min-width: 1280px) {
   .chips {
-    padding: 2px 24px 4px;
+    flex-wrap: wrap;
+    overflow-x: visible;
+    row-gap: 10px;
   }
 }

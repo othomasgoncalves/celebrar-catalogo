@@ -88,9 +88,8 @@
 }
 
 .conteudo {
-  padding: 22px 16px 48px;
-  max-width: 1080px;
-  margin: 0 auto;
+  padding: 22px var(--gutter) 48px;
+  min-width: 0;
 }
 
 @media (hover: hover) and (pointer: fine) {
