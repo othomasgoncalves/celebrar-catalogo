@@ -1,8 +1,12 @@
 # Celebrar Catalog
 
-Catálogo web da Celebrar Confeitaria: uma vitrine online onde o cliente navega,
-monta uma cesta e envia o pedido pelo WhatsApp. Sem carrinho, checkout ou
-pagamento online.
+Catálogo web da Celebrar: uma vitrine online onde o cliente navega, monta uma cesta e
+envia o pedido pelo WhatsApp. Sem carrinho, checkout ou pagamento online.
+
+Loja física em Paranavaí - PR. Os dados de contato exibidos no site (nome, endereço,
+telefone e número do WhatsApp) ficam todos em
+[`frontend/src/lib/loja.ts`](frontend/src/lib/loja.ts) — é o único arquivo a editar
+quando algum deles mudar.
 
 ## Stack
 

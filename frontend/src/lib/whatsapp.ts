@@ -1,11 +1,10 @@
 import type { ItemCesta } from '../types/cesta'
-
-const NUMERO_WHATSAPP = '5544999990000'
+import { LOJA } from './loja'
 
 const formatarPreco = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
 
 export function buildWhatsappUrl(mensagem: string): string {
-  return `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(mensagem)}`
+  return `https://wa.me/${LOJA.whatsapp}?text=${encodeURIComponent(mensagem)}`
 }
 
 /**
