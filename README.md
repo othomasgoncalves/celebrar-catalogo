@@ -11,16 +11,44 @@ pagamento online.
 
 ## Variáveis de ambiente
 
+Copie `.env.example` para `.env` e preencha — o `.env` está no `.gitignore` e o
+`docker compose` o lê automaticamente:
+
+```bash
+cp .env.example .env
+```
+
+### Obrigatórias
+
+Sem estas, a aplicação não sobe ou sobe insegura:
+
 | Variável | Padrão | Para que serve |
 | --- | --- | --- |
-| `APP_JWT_SECRET` | *(nenhum — obrigatório)* | Chave HMAC do JWT. Mínimo 32 bytes. |
-| `APP_JWT_EXPIRACAO` | `8h` | Validade da sessão. |
-| `APP_JWT_COOKIE_SECURE` | `false` | `true` em produção (HTTPS). Liga `Secure` no cookie e o HSTS. |
-| `APP_JWT_COOKIE_NOME` | `celebrar_sessao` | Nome do cookie de sessão. |
-| `APP_IMAGENS_DIRETORIO` | `dados/imagens` | Onde as imagens do catálogo são gravadas. |
+| `APP_JWT_SECRET` | *(nenhum — a aplicação **não sobe** sem ela)* | Chave HMAC do JWT. Mínimo 32 bytes. |
+| `APP_JWT_COOKIE_SECURE` | `false` | **`true` obrigatório em produção** (HTTPS). Liga `Secure` no cookie e o HSTS. |
+| `POSTGRES_PASSWORD` | `celebrarcatalog` *(só dev)* | Senha do banco. **Troque em produção.** |
 
-As duas que merecem atenção em produção são `APP_JWT_SECRET` (sem ela a aplicação não
-sobe) e `APP_IMAGENS_DIRETORIO` (sem um volume persistente as fotos somem).
+### Opcionais
+
+| Variável | Padrão | Para que serve |
+| --- | --- | --- |
+| `APP_JWT_EXPIRACAO` | `8h` | Validade da sessão. |
+| `APP_JWT_COOKIE_NOME` | `celebrar_sessao` | Nome do cookie de sessão. |
+| `APP_IMAGENS_DIRETORIO` | `dados/imagens` | Onde as imagens do catálogo são gravadas. Precisa ser volume persistente. |
+| `POSTGRES_DB` / `POSTGRES_USER` | `celebrarcatalog` | Nome do banco e do usuário. |
+| `SPRING_DATASOURCE_URL` | `jdbc:postgresql://localhost:5432/celebrarcatalog` | Conexão JDBC, se o banco não for o do compose. |
+| `SPRING_DATASOURCE_USERNAME` / `SPRING_DATASOURCE_PASSWORD` | `celebrarcatalog` *(só dev)* | Credenciais JDBC, se diferentes das acima. |
+
+As que merecem mais atenção em produção são `APP_JWT_SECRET` (sem ela a aplicação não
+sobe), `APP_JWT_COOKIE_SECURE` (sem ela o cookie de sessão viaja sem `Secure`),
+`POSTGRES_PASSWORD` (o padrão é público) e `APP_IMAGENS_DIRETORIO` (sem um volume
+persistente as fotos somem).
+
+> As credenciais de banco em `application.properties` são **defaults de desenvolvimento**,
+> escritos como `${SPRING_DATASOURCE_PASSWORD:celebrarcatalog}`. Variável de ambiente tem
+> precedência sobre `application.properties` no Spring Boot, então definir
+> `POSTGRES_PASSWORD` no `.env` já substitui o default — não é preciso editar o
+> `application.properties`.
 
 ### `APP_JWT_SECRET` — obrigatória
 
@@ -59,8 +87,10 @@ No `docker-compose.yml` isso já está resolvido: o diretório é
 
 ### Opção 1 — Postgres + backend via Docker
 
+Com o `.env` preenchido (ver [Variáveis de ambiente](#variáveis-de-ambiente)), o compose
+lê o arquivo sozinho:
+
 ```bash
-export APP_JWT_SECRET='<o-valor-gerado>'
 docker compose up --build
 ```
 
@@ -76,6 +106,9 @@ curl http://localhost:8080/api/produtos
 ```bash
 docker compose up postgres
 ```
+
+Rodando o backend fora do Docker o `.env` não é lido automaticamente — exporte as
+variáveis no shell:
 
 ```bash
 cd backend
@@ -129,7 +162,36 @@ A migration `V4__seed_admin.sql` cria um único usuário com `ROLE_ADMIN`:
 pessoa com acesso ao código conhece a credencial. Ela existe só para o primeiro acesso
 em ambiente local. **Troque a senha antes de expor a aplicação a qualquer rede.**
 
-Para trocar, gere um hash BCrypt com custo 12 e atualize a linha do usuário:
+### Como trocar a senha do admin
+
+A troca é feita direto no banco — não existe endpoint de troca de senha. São dois passos:
+gerar o hash e aplicar o `UPDATE`.
+
+**1. Gere um hash BCrypt com custo 12.** Qualquer uma das opções abaixo serve:
+
+```bash
+# Opção A — htpasswd (pacote apache2-utils / httpd-tools)
+htpasswd -bnBC 12 "" 'minha-senha-nova' | tr -d ':\n'
+
+# Opção B — Python (bcrypt instalado via pip)
+python -c "import bcrypt; print(bcrypt.hashpw(b'minha-senha-nova', bcrypt.gensalt(12)).decode())"
+```
+
+O resultado começa com `$2a$12$` ou `$2b$12$` e tem 60 caracteres. O Spring Security
+aceita os dois prefixos.
+
+> Cuidado com o histórico do shell: um comando com a senha em claro fica gravado no
+> `~/.bash_history`. Prefixe com um espaço, ou limpe a linha depois.
+
+**2. Aplique o hash.** Abra um `psql` no banco da aplicação:
+
+```bash
+# Com o banco do docker-compose de pé:
+docker compose exec postgres psql -U celebrarcatalog -d celebrarcatalog
+```
+
+E rode o `UPDATE` (o `falhas_login`/`bloqueado_ate` zerados destravam a conta, caso ela
+tenha sido bloqueada por tentativas erradas):
 
 ```sql
 UPDATE usuario
@@ -138,6 +200,11 @@ UPDATE usuario
        bloqueado_ate = NULL
  WHERE email = 'admin@celebrar.local';
 ```
+
+Confirme que atingiu exatamente uma linha (`UPDATE 1`) e faça login com a senha nova. A
+sessão antiga continua válida até expirar: o JWT é stateless e não é revogado pela troca
+de senha. Para invalidar todas as sessões de imediato, troque também o `APP_JWT_SECRET` e
+reinicie a aplicação.
 
 Nunca grave a senha em claro no banco nem em uma migration versionada.
 
@@ -336,6 +403,232 @@ await fetch('/api/auth/logout', {
 Uma requisição que altera estado sem o header recebe `403` com
 `{"erro":"Acesso negado"}`; sem sessão válida, `401` com `{"erro":"Não autenticado"}`.
 Nenhuma das duas devolve HTML ou stack trace.
+
+## Segurança
+
+Resumo do modelo de segurança da aplicação. Cada item tem a seção detalhada linkada.
+
+### Superfície pública
+
+A API é **fechada por padrão**: `SecurityConfig` termina em `.anyRequest().denyAll()`, então
+uma rota só fica acessível se estiver listada explicitamente. O que é público é só leitura:
+
+- `GET /api/categorias`, `GET /api/produtos`, `GET /api/cestas` — só registros ativos
+- `GET /api/imagens/{nome}` — nome validado contra `UUID+extensão` antes de tocar o disco
+- `POST /api/auth/login` e `POST /api/auth/logout`
+
+**Nenhum endpoint de escrita é público.** Toda escrita de catálogo vive sob
+`/api/admin/**`, que exige `hasRole("ADMIN")` — sessão válida — **e** o header CSRF.
+O upload de imagem (`POST /api/admin/imagens`) está dentro desse prefixo.
+
+### Autenticação e sessão
+
+JWT HS256 assinado com `APP_JWT_SECRET`, em cookie `HttpOnly` + `SameSite=Strict` +
+`Path=/`, com `Secure` quando `APP_JWT_COOKIE_SECURE=true`. Ver
+[Como a sessão funciona](#como-a-sessão-funciona).
+
+- A aplicação **se recusa a subir** sem um segredo de 32+ bytes. Não há segredo padrão.
+- A validação do token rejeita `alg: none`, só aceita `HS256`, compara a assinatura em
+  tempo constante (`MessageDigest.isEqual`) e exige `exp`, `iat`, `jti`, `sub` e `role`.
+- Senhas são BCrypt custo 12. Login com e-mail inexistente ainda roda um `matches` contra
+  um hash descartável, para o tempo de resposta não revelar quais e-mails existem.
+- Cinco falhas bloqueiam a conta por 15 minutos. Ver
+  [Proteção contra tentativas repetidas](#proteção-contra-tentativas-repetidas).
+
+### Entrada
+
+- Todo DTO de entrada (`LoginRequest`, `CategoriaEntradaDto`, `ProdutoEntradaDto`,
+  `CestaProntaEntradaDto`) é validado com Bean Validation e aplicado com `@Valid`.
+- `spring.jackson.deserialization.fail-on-unknown-properties=true`: campo desconhecido no
+  corpo é `400`, não é ignorado em silêncio. DTOs de entrada não têm `id`.
+- **Não há SQL concatenado.** O acesso a dados é só Spring Data JPA com query methods
+  derivadas do nome — nenhuma `@Query`, nenhuma native query, nenhum `EntityManager` ou
+  `JdbcTemplate` no projeto. Os parâmetros são sempre bind parameters.
+- Upload valida tamanho, content-type declarado **e** magic bytes do conteúdo; o nome do
+  cliente é descartado e substituído por UUID + extensão do formato detectado. Ver
+  [Imagens](#imagens).
+
+### Respostas de erro
+
+Nem `404` nem `500` vazam stack trace, classe de exceção ou SQL:
+
+- `server.error.include-stacktrace=never` e `server.error.include-message=never`.
+- `ApiExceptionHandler` é o único caminho de saída: `500` responde sempre
+  `{"erro":"Erro inesperado"}` com o detalhe apenas no log do servidor; `404` responde a
+  mensagem de domínio (`"Produto <id> nao encontrado"`), sem internals.
+- `401` e `403` são JSON fixo (`RespostasSeguranca`), nunca a página HTML do container.
+
+### Cabeçalhos
+
+`SecurityConfig` envia CSP (`default-src 'self'`, `object-src 'none'`,
+`frame-ancestors 'none'`), `X-Frame-Options: DENY`, `Referrer-Policy: no-referrer`,
+`Permissions-Policy` negando câmera/microfone/geolocalização, e HSTS de um ano
+(`includeSubDomains`) quando `APP_JWT_COOKIE_SECURE=true`.
+
+### Riscos residuais conhecidos
+
+Pontos que **não** estão resolvidos no código e dependem de ação no deploy:
+
+1. **A senha inicial do admin é pública** — o hash está em `V4__seed_admin.sql` e a senha
+   em claro está neste README. É obrigatório trocá-la antes de expor a aplicação. Ver
+   [Como trocar a senha do admin](#como-trocar-a-senha-do-admin).
+2. **O default de `POSTGRES_PASSWORD` é público** e precisa ser trocado em produção.
+3. **O container do backend roda como `root`** (`backend/Dockerfile` não tem `USER`).
+   Trocar exige acertar a posse do volume de imagens; até lá, não exponha a porta do
+   container diretamente.
+4. **Logout não revoga o JWT** — o token é stateless e continua válido até `exp` (8h
+   por padrão). Trocar o `APP_JWT_SECRET` invalida todas as sessões.
+5. **Não há rate limit por IP**, só o bloqueio por usuário cadastrado. Tentativas contra
+   e-mails inexistentes não são limitadas pela aplicação; use o proxy reverso.
+
+## Deploy
+
+Passo a passo para colocar em produção atrás de HTTPS.
+
+### 1. Pré-requisitos
+
+- Docker e Docker Compose no servidor
+- Um domínio apontando para o servidor
+- Um proxy reverso terminando TLS (Nginx, Caddy, Traefik) — **a aplicação não termina TLS**
+
+### 2. Clonar e configurar o ambiente
+
+```bash
+git clone https://github.com/othomasgoncalves/celebrar-catalogo.git
+cd celebrar-catalogo
+cp .env.example .env
+```
+
+Edite o `.env` com valores de produção:
+
+```bash
+APP_JWT_SECRET=<saída de: openssl rand -base64 48>
+APP_JWT_COOKIE_SECURE=true
+POSTGRES_PASSWORD=<senha forte, gerada>
+```
+
+`APP_JWT_COOKIE_SECURE=true` é o que liga o atributo `Secure` no cookie de sessão e o
+HSTS. Com ele em `false` atrás de HTTPS, o cookie da sessão do admin pode vazar em uma
+requisição HTTP.
+
+### 3. Subir backend e banco
+
+```bash
+docker compose up -d --build
+```
+
+O Flyway aplica as migrations na subida. Confira que subiu:
+
+```bash
+docker compose ps
+curl http://localhost:8080/api/produtos
+```
+
+### 4. Trocar a senha do admin — antes de expor
+
+Este passo não é opcional: a senha do seed é pública. Siga
+[Como trocar a senha do admin](#como-trocar-a-senha-do-admin) **antes** de liberar o
+acesso externo.
+
+Confirme que a senha antiga não funciona mais:
+
+```bash
+curl -i -X POST http://localhost:8080/api/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"admin@celebrar.local","senha":"CelebrarAdmin!2026"}'
+# esperado: 401
+```
+
+### 5. Build do frontend
+
+```bash
+cd frontend
+npm ci
+npm run build
+```
+
+Gera `frontend/dist/`, que é conteúdo estático. Sirva pelo proxy reverso.
+
+### 6. Proxy reverso
+
+O proxy serve `frontend/dist/` na raiz e encaminha `/api` para o backend. Esboço com
+Nginx:
+
+```nginx
+server {
+    listen 443 ssl;
+    server_name catalogo.exemplo.com.br;
+
+    ssl_certificate     /etc/letsencrypt/live/catalogo.exemplo.com.br/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/catalogo.exemplo.com.br/privkey.pem;
+
+    root /srv/celebrar-catalogo/frontend/dist;
+
+    # SPA: rotas do React resolvem no index.html
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location /api/ {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # O upload aceita até 3 MB; o padrão do Nginx é 1 MB.
+        client_max_body_size 4m;
+    }
+}
+
+server {
+    listen 80;
+    server_name catalogo.exemplo.com.br;
+    return 301 https://$host$request_uri;
+}
+```
+
+Backend e frontend ficam na **mesma origem**, então não há CORS a configurar e o
+`SameSite=Strict` do cookie funciona.
+
+Com o proxy no lugar, feche a porta `8080` para o mundo — no `docker-compose.yml`, troque
+`"8080:8080"` por `"127.0.0.1:8080:8080"` para publicar só no loopback.
+
+### 7. Verificação pós-deploy
+
+```bash
+# Cookie de sessão com HttpOnly, Secure, SameSite=Strict, Path=/
+curl -si -X POST https://catalogo.exemplo.com.br/api/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"admin@celebrar.local","senha":"<senha-nova>"}' | grep -i set-cookie
+
+# Escrita sem sessão é recusada (401)
+curl -s -o /dev/null -w '%{http_code}\n' \
+  -X POST https://catalogo.exemplo.com.br/api/admin/produtos \
+  -H 'Content-Type: application/json' -d '{}'
+
+# Rota não mapeada é negada
+curl -s -o /dev/null -w '%{http_code}\n' https://catalogo.exemplo.com.br/api/qualquer
+```
+
+### 8. Backup
+
+O que precisa de backup são o banco e o volume de imagens — as fotos **não** estão no
+banco:
+
+```bash
+docker compose exec -T postgres pg_dump -U celebrarcatalog celebrarcatalog | gzip > backup-db.sql.gz
+docker run --rm -v celebrar-catalogo_celebrarcatalog-imagens:/dados -v "$PWD":/backup \
+  alpine tar czf /backup/backup-imagens.tar.gz -C /dados .
+```
+
+### Atualizar uma instalação existente
+
+```bash
+git pull
+docker compose up -d --build        # Flyway aplica as migrations novas
+cd frontend && npm ci && npm run build
+```
 
 ## Testes
 
