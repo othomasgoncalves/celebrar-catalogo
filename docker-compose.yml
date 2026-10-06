@@ -4,15 +4,16 @@ services:
     container_name: celebrarcatalog-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: celebrarcatalog
-      POSTGRES_USER: celebrarcatalog
-      POSTGRES_PASSWORD: celebrarcatalog
+      POSTGRES_DB: ${POSTGRES_DB:-celebrarcatalog}
+      POSTGRES_USER: ${POSTGRES_USER:-celebrarcatalog}
+      # Padrao so para dev local. Em producao defina POSTGRES_PASSWORD no .env.
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-celebrarcatalog}
     ports:
       - "5432:5432"
     volumes:
       - celebrarcatalog-postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U celebrarcatalog -d celebrarcatalog"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -26,9 +27,9 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/celebrarcatalog
-      SPRING_DATASOURCE_USERNAME: celebrarcatalog
-      SPRING_DATASOURCE_PASSWORD: celebrarcatalog
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-celebrarcatalog}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-celebrarcatalog}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-celebrarcatalog}
       # Repassado do ambiente do host, sem valor padrao de proposito: o backend se
       # recusa a subir sem um segredo de 32+ bytes. Defina APP_JWT_SECRET no shell ou
       # em um arquivo .env (que nao deve ser versionado) antes do `docker compose up`.
