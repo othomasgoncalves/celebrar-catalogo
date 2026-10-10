@@ -193,7 +193,7 @@ class SecurityConfigTest {
     void headers_de_seguranca_acompanham_as_respostas() throws Exception {
         mockMvc.perform(get("/api/produtos"))
                 .andExpect(header().string("Content-Security-Policy",
-                        "default-src 'self'; img-src 'self' data:; script-src 'self'; "
+                        "default-src 'self'; img-src 'self' data:; font-src 'self' data:; script-src 'self'; "
                                 + "style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; "
                                 + "object-src 'none'; base-uri 'self'"))
                 .andExpect(header().string("X-Content-Type-Options", "nosniff"))

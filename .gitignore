@@ -16,3 +16,6 @@ Thumbs.db
 # volume; aqui e so lixo de desenvolvimento.
 dados/
 backend/dados/
+
+# Frontend copiado para dentro do jar no build de producao (ver .github/workflows).
+backend/src/main/resources/static/

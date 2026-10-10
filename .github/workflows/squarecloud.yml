@@ -1,0 +1,53 @@
+# Gera o pacote pronto para a Square Cloud (frontend embutido no jar do Spring Boot).
+# Baixe o artefato "celebrar-squarecloud" na aba Actions e envie o .zip no painel da Square.
+name: Pacote Square Cloud
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+
+      - name: Build do frontend
+        working-directory: frontend
+        run: |
+          npm ci --legacy-peer-deps
+          npm run build
+
+      - name: Copia o frontend para dentro do backend
+        run: |
+          mkdir -p backend/src/main/resources/static
+          cp -r frontend/dist/. backend/src/main/resources/static/
+
+      - name: Build do backend
+        working-directory: backend
+        run: |
+          chmod +x mvnw
+          ./mvnw -B package -DskipTests
+
+      - name: Monta o pacote
+        run: |
+          mkdir -p deploy
+          cp backend/target/celebrarcatalog-*.jar deploy/celebrar.jar
+          cp squarecloud.app deploy/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: celebrar-squarecloud
+          path: deploy/
