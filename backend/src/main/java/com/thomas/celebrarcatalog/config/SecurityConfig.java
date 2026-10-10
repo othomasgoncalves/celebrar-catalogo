@@ -26,7 +26,7 @@ import org.springframework.security.web.servlet.util.matcher.PathPatternRequestM
 @EnableConfigurationProperties(JwtProperties.class)
 public class SecurityConfig {
 
-    private static final String CSP = "default-src 'self'; img-src 'self' data:; "
+    private static final String CSP = "default-src 'self'; img-src 'self' data:; font-src 'self' data:; "
             + "script-src 'self'; style-src 'self' 'unsafe-inline'; "
             + "frame-ancestors 'none'; object-src 'none'; base-uri 'self'";
 
@@ -59,6 +59,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(autorizacao -> autorizacao
                         .dispatcherTypeMatchers(DispatcherType.ERROR, DispatcherType.ASYNC).permitAll()
 
+                        // Frontend (SPA) empacotado no mesmo jar: os arquivos estaticos e as
+                        // rotas do React Router. A protecao do admin fica na API, nao no HTML.
+                        .requestMatchers(HttpMethod.GET,
+                                "/", "/index.html", "/assets/**", "/favicon.ico",
+                                "/montar", "/admin", "/admin/**").permitAll()
                         .requestMatchers(HttpMethod.GET,
                                 "/api/categorias", "/api/produtos", "/api/cestas", "/api/imagens/**").permitAll()
                         .requestMatchers(HttpMethod.POST,
